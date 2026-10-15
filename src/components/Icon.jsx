@@ -26,6 +26,8 @@ const paths = {
       <path d="M4.5 20c.9-3.6 3.9-5.5 7.5-5.5s6.6 1.9 7.5 5.5" />
     </>
   ),
+  play: <path d="M8 5.5v13l10.5-6.5z" />,
+  download: <path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14" />,
   mail: (
     <>
       <rect x="3.5" y="5.5" width="17" height="13" />

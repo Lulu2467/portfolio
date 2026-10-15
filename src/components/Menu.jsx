@@ -1,17 +1,20 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { profile, works } from "../data";
+import { profile } from "../content/profile";
+import { works } from "../content/works";
 import Icon from "./Icon";
+import { Cover } from "./WorkCard";
 
 const sections = [
-  { to: "/#work", label: "作品" },
-  { to: "/#experience", label: "实习经历" },
-  { to: "/#about", label: "关于" },
+  { to: "/", label: "首页" },
+  { to: "/works", label: "全部作品" },
+  { to: "/resume", label: "履历" },
   { to: "/#contact", label: "联系" },
 ];
 
 export default function Menu({ open, onClose }) {
   const closeRef = useRef(null);
+  const featured = works.filter((work) => work.featured);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -34,19 +37,8 @@ export default function Menu({ open, onClose }) {
         aria-label="关闭菜单"
         onClick={onClose}
       />
-      <aside
-        className="menu-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-label="菜单"
-        inert={!open}
-      >
-        <button
-          ref={closeRef}
-          className="header-btn menu-close"
-          type="button"
-          onClick={onClose}
-        >
+      <aside className="menu-panel" role="dialog" aria-modal="true" aria-label="菜单" inert={!open}>
+        <button ref={closeRef} className="header-btn menu-close" type="button" onClick={onClose}>
           <Icon name="close" />
           <span className="header-btn-label">关闭</span>
         </button>
@@ -59,25 +51,17 @@ export default function Menu({ open, onClose }) {
           ))}
         </nav>
 
-        <p className="label menu-label">作品</p>
+        <p className="label menu-label">精选作品</p>
         <ul className="menu-works">
-          {works.map((work) => (
+          {featured.map((work) => (
             <li key={work.slug}>
               <Link to={`/work/${work.slug}`} onClick={onClose}>
                 <span className="menu-thumb">
-                  {work.cover ? (
-                    <img
-                      src={work.cover.src}
-                      alt=""
-                      style={{ objectPosition: work.cover.position }}
-                    />
-                  ) : (
-                    <span className="menu-thumb-plate" />
-                  )}
+                  <Cover work={work} />
                 </span>
                 <span>
                   <span className="menu-work-title">{work.title}</span>
-                  <span className="label">{work.org}</span>
+                  <span className="label">{work.category === "work" ? "实习与工作" : "学生作品"}</span>
                 </span>
               </Link>
             </li>

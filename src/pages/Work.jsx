@@ -1,24 +1,28 @@
 import { Link, Navigate, useParams } from "react-router-dom";
-import Accordion from "../components/Accordion";
+import Blocks from "../components/Blocks";
 import Frame from "../components/Frame";
-import Gallery from "../components/Gallery";
 import Icon from "../components/Icon";
-import { getWork, profile, works } from "../data";
+import { Cover } from "../components/WorkCard";
+import { profile } from "../content/profile";
+import { getWork, works } from "../content/works";
 
 export default function Work() {
   const { slug } = useParams();
   const work = getWork(slug);
 
   if (!work) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/works" replace />;
   }
 
-  const index = works.findIndex((item) => item.slug === work.slug);
-  const next = works[(index + 1) % works.length];
+  const siblings = works.filter((item) => item.category === work.category);
+  const index = siblings.findIndex((item) => item.slug === work.slug);
+  const prev = siblings[(index - 1 + siblings.length) % siblings.length];
+  const next = siblings[(index + 1) % siblings.length];
+  const categoryLabel = work.category === "work" ? "实习与工作" : "学生作品";
 
   const actions = (
     <div className="action-bar">
-      <Link className="action-icon" to="/#work" aria-label="全部作品">
+      <Link className="action-icon" to={`/works?c=${work.category}`} aria-label="作品列表">
         <Icon name="grid" size={22} />
         <span>作品</span>
       </Link>
@@ -34,68 +38,53 @@ export default function Work() {
 
   return (
     <Frame actions={actions}>
-      <article className="pdp" key={work.slug}>
-        <div className="pdp-media">
-          {work.images.length > 0 ? (
-            <Gallery images={work.images} />
-          ) : (
-            <div className="plate pdp-plate">
-              <span className="label">{work.plate.place}</span>
-              <span className="plate-title">{work.plate.title}</span>
-            </div>
-          )}
-        </div>
-
-        <aside className="pdp-info">
-          <Link className="back-link label" to="/#work">
-            <Icon name="back" size={14} />
-            全部作品
-          </Link>
-          <p className="label pdp-kicker">
-            {work.index} · {work.org}
-          </p>
-          <h1 className="pdp-title">{work.title}</h1>
-          <p className="pdp-latin">{work.latin}</p>
-          <p className="pdp-summary">{work.summary}</p>
-
-          <dl className="pdp-meta">
-            <div>
-              <dt className="label">角色</dt>
-              <dd>{work.role}</dd>
-            </div>
-            <div>
-              <dt className="label">时间</dt>
-              <dd>{work.time}</dd>
-            </div>
-          </dl>
-
-          <div className="acc-list">
-            <Accordion title="项目介绍" defaultOpen>
-              <p>{work.intro}</p>
-            </Accordion>
-            <Accordion title="我的工作" defaultOpen>
-              <ul className="dash-list">
-                {work.points.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ul>
-            </Accordion>
-            {work.result ? (
-              <Accordion title="成果">
-                <p>{work.result}</p>
-              </Accordion>
-            ) : null}
+      <article className="work" key={work.slug}>
+        <header className="work-head">
+          <div className="work-cover">
+            <Cover work={work} />
           </div>
-
-          <div className="pdp-actions">
-            <Link className="btn btn-solid" to={`/work/${next.slug}`}>
-              下一件 · {next.title}
+          <div className="work-info">
+            <Link className="back-link label" to={`/works?c=${work.category}`}>
+              <Icon name="back" size={14} />
+              {categoryLabel}
             </Link>
-            <a className="btn btn-outline" href={`mailto:${profile.email}`}>
-              联系我
-            </a>
+            {work.draft ? <span className="draft-badge">内容待补充</span> : null}
+            <h1 className="work-title">{work.title}</h1>
+            <p className="work-latin">{work.latin}</p>
+            <p className="work-summary">{work.summary}</p>
+            <dl className="work-meta">
+              <div>
+                <dt className="label">机构 / 课程</dt>
+                <dd>{work.org}</dd>
+              </div>
+              <div>
+                <dt className="label">时间</dt>
+                <dd>{work.time}</dd>
+              </div>
+              <div>
+                <dt className="label">角色</dt>
+                <dd>{work.role}</dd>
+              </div>
+              <div>
+                <dt className="label">类型</dt>
+                <dd>{work.tags.join(" · ")}</dd>
+              </div>
+            </dl>
           </div>
-        </aside>
+        </header>
+
+        <Blocks blocks={work.blocks} />
+
+        <nav className="work-pager" aria-label="同类作品">
+          <Link to={`/work/${prev.slug}`}>
+            <span className="label">上一件</span>
+            <span className="pager-title">{prev.title}</span>
+          </Link>
+          <Link to={`/work/${next.slug}`}>
+            <span className="label">下一件</span>
+            <span className="pager-title">{next.title}</span>
+          </Link>
+        </nav>
       </article>
     </Frame>
   );

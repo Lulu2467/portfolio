@@ -1,27 +1,28 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import Accordion from "../components/Accordion";
 import Frame from "../components/Frame";
 import Icon from "../components/Icon";
 import Reveal from "../components/Reveal";
-import { getWork, honors, internships, profile, tools, works } from "../data";
+import WorkCard from "../components/WorkCard";
+import { education, highlights, internships, profile } from "../content/profile";
+import { getWork, works, worksIn } from "../content/works";
+
+const entries = [
+  { id: "work", title: "实习与工作", latin: "Internship & Work", cover: "/images/hermes-booth.jpg" },
+  { id: "student", title: "学生作品", latin: "Student Works", cover: "/images/grad-board.jpg" },
+];
 
 export default function Home() {
   const hermes = getWork("hermes");
-  const quna = getWork("quna");
 
   return (
     <Frame overHero>
       <section className="hero">
-        <img
-          className="hero-img"
-          src="/images/portrait.jpg"
-          alt="杨心玥的黑白肖像，短发，侧光打在脸上"
-        />
+        <img className="hero-img" src="/images/portrait.jpg" alt="杨心玥的黑白肖像，短发，侧光打在脸上" />
         <div className="hero-copy">
           <p className="label">{profile.title}</p>
           <h1>{profile.name}</h1>
-          <Link className="link-line" to="/#work">
+          <Link className="link-line" to="/works">
             探索作品
           </Link>
         </div>
@@ -35,100 +36,88 @@ export default function Home() {
         </p>
       </Reveal>
 
-      <WorkRail />
+      <FeaturedRail />
+
+      <section className="section entries">
+        {entries.map((entry, i) => (
+          <Reveal key={entry.id} delay={i * 120}>
+            <Link className="entry" to={`/works?c=${entry.id}`}>
+              <span className="entry-media">
+                <img src={entry.cover} alt="" loading="lazy" />
+              </span>
+              <span className="entry-copy">
+                <span className="label">{entry.latin}</span>
+                <span className="entry-title">{entry.title}</span>
+                <span className="entry-count">{worksIn(entry.id).length} 件作品</span>
+                <span className="link-line">进入</span>
+              </span>
+            </Link>
+          </Reveal>
+        ))}
+      </section>
 
       <section className="feature">
         <Link className="feature-banner" to={`/work/${hermes.slug}`}>
-          <img src={hermes.images[0].src} alt={hermes.images[0].alt} loading="lazy" />
+          <img src={hermes.cover.src} alt="爱马仕圣诞派对现场的厨具柜照相亭" loading="lazy" />
           <span className="feature-copy">
             <span className="label">{hermes.latin}</span>
             <span className="feature-title">{hermes.title}</span>
             <span className="link-line">了解更多</span>
           </span>
         </Link>
-
-        <div className="feature-split">
-          <Reveal className="feature-media">
-            <img src={quna.images[0].src} alt={quna.images[0].alt} loading="lazy" />
-          </Reveal>
-          <Reveal className="feature-text" delay={120}>
-            <p className="label">{quna.latin}</p>
-            <h2 className="serif-title">{quna.title}</h2>
-            <p>{quna.intro}</p>
-            <p className="feature-result">{quna.result}</p>
-            <Link className="btn btn-outline" to={`/work/${quna.slug}`}>
-              查看项目
-            </Link>
-          </Reveal>
-        </div>
       </section>
 
-      <section className="section experience" id="experience">
-        <Reveal className="section-head">
-          <p className="label">Experience</p>
-          <h2 className="serif-title">实习经历</h2>
+      <section className="section resume-brief" id="resume">
+        <Reveal className="section-head section-head-row">
+          <div>
+            <p className="label">Résumé</p>
+            <h2 className="serif-title">履历</h2>
+          </div>
+          <Link className="link-line" to="/resume">
+            查看完整履历
+          </Link>
         </Reveal>
-        <div className="acc-list">
-          {internships.map((job, i) => (
-            <Accordion
-              key={job.org}
-              defaultOpen={i === 0}
-              title={job.org}
-              aside={`${job.role} · ${job.time}`}
-            >
-              <p className="acc-role">
-                {job.role} · {job.time}
-              </p>
-              {job.projects.map((project) => (
-                <div className="job-project" key={project.title}>
-                  <h4>{project.title}</h4>
-                  <ul>
-                    {project.points.map((point) => (
-                      <li key={point}>{point}</li>
-                    ))}
-                  </ul>
-                  {project.slug ? (
-                    <Link className="link-line" to={`/work/${project.slug}`}>
-                      查看项目
-                    </Link>
-                  ) : null}
-                </div>
-              ))}
-            </Accordion>
+
+        <Reveal className="stats-row">
+          {highlights.map((item) => (
+            <div key={item.label}>
+              <span className="stat-value">{item.value}</span>
+              <span className="stat-label">{item.label}</span>
+            </div>
           ))}
-        </div>
-      </section>
-
-      <section className="section about" id="about">
-        <Reveal className="section-head">
-          <p className="label">About</p>
-          <h2 className="serif-title">关于</h2>
         </Reveal>
-        <div className="about-grid">
-          <Reveal className="about-copy">
-            <p>
-              杨心玥，湖北美术学院艺术与科技专业，辅修艺术疗愈。作品在产品界面、线下活动和沉浸展览之间来回：同一条逻辑，有时长在屏幕上，有时长在房间里。
+
+        <div className="brief-grid">
+          <Reveal className="brief-col">
+            <p className="label">教育</p>
+            <p className="brief-main">{education.school}</p>
+            <p className="brief-sub">
+              {education.major} · {education.minor}
             </p>
-            <p>湖北省心理咨询师协会艺术与心理专委会会员。平时画画、写书法、跳舞、读书。</p>
           </Reveal>
-          <Reveal className="about-facts" delay={120}>
-            <div>
-              <p className="label">工具</p>
-              <ul>
-                {tools.map((tool) => (
-                  <li key={tool}>{tool}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="label">荣誉</p>
-              <ul>
-                {honors.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
+          <Reveal className="brief-col" delay={100}>
+            <p className="label">实习经历</p>
+            <ul className="brief-list">
+              {internships.map((job) => (
+                <li key={job.org}>
+                  <span className="brief-main">{job.org}</span>
+                  <span className="brief-sub">
+                    {job.role} · {job.time}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </Reveal>
+        </div>
+
+        <div className="brief-actions">
+          <Link className="btn btn-solid" to="/resume">
+            完整履历
+          </Link>
+          <a className="btn btn-outline" href={profile.resumePdf} download>
+            <Icon name="download" size={16} />
+            <span>下载 PDF 简历</span>
+          </a>
         </div>
       </section>
 
@@ -156,8 +145,9 @@ export default function Home() {
   );
 }
 
-function WorkRail() {
+function FeaturedRail() {
   const railRef = useRef(null);
+  const featured = works.filter((work) => work.featured);
 
   const scrollBy = (direction) => {
     const rail = railRef.current;
@@ -172,10 +162,12 @@ function WorkRail() {
       <div className="section-head section-head-row">
         <Reveal>
           <p className="label">Selected Works</p>
-          <h2 className="serif-title">作品系列</h2>
+          <h2 className="serif-title">精选作品</h2>
         </Reveal>
         <div className="rail-controls">
-          <span className="label">共 {works.length} 件</span>
+          <Link className="link-line" to="/works">
+            全部 {works.length} 件
+          </Link>
           <button type="button" className="round-btn" onClick={() => scrollBy(-1)} aria-label="上一件">
             <Icon name="back" size={18} />
           </button>
@@ -185,33 +177,10 @@ function WorkRail() {
         </div>
       </div>
       <ol className="rail" ref={railRef}>
-        {works.map((work, i) => (
-          <Reveal as="li" key={work.slug} className="card" delay={i * 80}>
-            <Link to={`/work/${work.slug}`}>
-              <span className="card-media">
-                {work.cover ? (
-                  <img
-                    src={work.cover.src}
-                    alt=""
-                    loading="lazy"
-                    style={{ objectPosition: work.cover.position }}
-                  />
-                ) : (
-                  <span className="plate">
-                    <span className="label">{work.plate.place}</span>
-                    <span className="plate-title">{work.plate.title}</span>
-                  </span>
-                )}
-                <span className="card-index">{work.index}</span>
-              </span>
-              <span className="card-body">
-                <span className="label">{work.org}</span>
-                <span className="card-title">{work.title}</span>
-                <span className="card-summary">{work.summary}</span>
-                <span className="link-line">了解更多</span>
-              </span>
-            </Link>
-          </Reveal>
+        {featured.map((work, i) => (
+          <li key={work.slug} className="card">
+            <WorkCard work={work} index={String(i + 1).padStart(2, "0")} />
+          </li>
         ))}
       </ol>
     </section>
