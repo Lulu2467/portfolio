@@ -1,0 +1,121 @@
+.liquid-root {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: #ededed;
+  color: #111;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.liquid-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  pointer-events: none;
+}
+
+.liquid-brand {
+  font-family: "Bodoni Moda", Didot, Georgia, serif;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+}
+
+.liquid-hint {
+  font-size: 12px;
+  color: #777;
+}
+
+.liquid-host {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: grab;
+}
+
+.liquid-host:active {
+  cursor: grabbing;
+}
+
+.liquid-canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.liquid-label {
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 5;
+  width: min(420px, calc(100% - 40px));
+  display: grid;
+  gap: 2px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.liquid-label strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.liquid-label span {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.45;
+}
+
+.liquid-links {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #555;
+}
+
+.liquid-links a:hover {
+  color: #111;
+}
+
+.liquid-fallback {
+  display: none;
+}
+
+.liquid-host[data-fallback="1"] + .liquid-label + .liquid-fallback,
+.liquid-root:has(.liquid-host[data-fallback="1"]) .liquid-fallback {
+  display: grid;
+  gap: 16px;
+  padding: 72px 20px 40px;
+  overflow: auto;
+  height: 100%;
+}
+
+.liquid-root:has(.liquid-host[data-fallback="1"]) .liquid-host,
+.liquid-root:has(.liquid-host[data-fallback="1"]) .liquid-label {
+  display: none;
+}
+
+.liquid-fallback a {
+  display: grid;
+  gap: 8px;
+}
+
+.liquid-fallback img {
+  width: 100%;
+  border-radius: 16px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
